@@ -1,8 +1,3 @@
-import {
-  resourceBarStyles,
-  resourceStatusLabels,
-  resourceStatusStyles,
-} from '#/constants/resource'
 import { formatQuantity, percentage } from '#/helpers/quantity'
 import { getMaterialStocks } from '#/services/material'
 import { getResources } from '#/services/resource'
@@ -12,6 +7,24 @@ import { Boxes, Cog } from 'lucide-react'
 import { useState } from 'react'
 
 const LOW_STOCK_RATIO = 0.2
+
+const resourceStatusStyles: Record<TResourceStatus, string> = {
+  busy: 'bg-blue-50 text-blue-700',
+  idle: 'bg-slate-100 text-slate-600',
+  blocked: 'bg-amber-50 text-amber-700',
+}
+
+const resourceStatusLabels: Record<TResourceStatus, string> = {
+  busy: 'Busy',
+  idle: 'Idle',
+  blocked: 'Blocked',
+}
+
+const resourceBarStyles: Record<TResourceStatus, string> = {
+  busy: 'bg-blue-600',
+  idle: 'bg-slate-400',
+  blocked: 'bg-amber-500',
+}
 
 export const ResourcesTab = () => {
   const [view, setView] = useState<'materials' | 'resources'>('materials')

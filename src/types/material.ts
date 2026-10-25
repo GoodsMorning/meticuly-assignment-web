@@ -7,3 +7,9 @@ export type TMaterialStock = {
   /** allocated to queued steps */
   reserved: number
 }
+
+export type TMaterial = {
+  name: string
+  quantity: number
+  unit: string
+}

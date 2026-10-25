@@ -1,4 +1,8 @@
-import type { TOrderStatus } from '#/types/order'
+import { getOrderStatus } from '#/helpers/order'
+import { formatQuantity } from '#/helpers/quantity'
+import { getOrder } from '#/services/order'
+import type { TOrderOperation, TOrderStatus, TProductionOrder } from '#/types/order'
+import { steps  } from '#/types/step'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -19,39 +23,6 @@ const MIN_ROW_HEIGHT = 56
 // Roughly how many minutes the 76px min bar width covers (used for overlap math)
 const MIN_BAR_MINUTES = 65
 
-type StepName = 'Machining' | 'Assembly' | 'Quality Check' | 'Packaging'
-
-type Material = {
-  name: string
-  quantity: number
-  unit: string
-}
-
-type OrderOperation = {
-  step: StepName
-  /** minutes relative to NOW (negative = past, positive = future) */
-  start: number
-  /** minutes */
-  duration: number
-  status: TOrderStatus
-  /** machines, stations, tools */
-  resources: string[]
-  /** consumed materials with quantities */
-  materials: Material[]
-}
-
-type ProductionOrder = {
-  id: string
-  /** ordered steps this order goes through */
-  operations: OrderOperation[]
-}
-
-type FlatOperation = {
-  key: string
-  order: ProductionOrder
-  operation: OrderOperation
-  index: number
-}
 
 const statusStyles: Record<TOrderStatus, string> = {
   queued: 'bg-slate-300 text-slate-800',
@@ -67,243 +38,16 @@ const statusLabels: Record<TOrderStatus, string> = {
   finished: 'Finished',
 }
 
-const steps: StepName[] = [
-  'Machining',
-  'Assembly',
-  'Quality Check',
-  'Packaging',
-]
-
-const material = (name: string, quantity: number, unit: string): Material => ({
-  name,
-  quantity,
-  unit,
-})
-
-// Each order has multiple steps. Times are minutes relative to NOW.
-const orders: ProductionOrder[] = [
-  {
-    id: 'ORD-001',
-    operations: [
-      {
-        step: 'Machining',
-        start: -270,
-        duration: 90,
-        status: 'finished',
-        resources: ['Machine 01'],
-        materials: [material('Material A', 12, 'kg')],
-      },
-      {
-        step: 'Assembly',
-        start: -180,
-        duration: 90,
-        status: 'finished',
-        resources: ['Assembly Station 01'],
-        materials: [
-          material('Material B', 8, 'pcs'),
-          material('Fasteners', 40, 'pcs'),
-        ],
-      },
-      {
-        step: 'Quality Check',
-        start: -90,
-        duration: 60,
-        status: 'finished',
-        resources: ['QC Station 01', 'Inspection Kit'],
-        materials: [material('Calibration Fluid', 0.5, 'L')],
-      },
-      {
-        step: 'Packaging',
-        start: -30,
-        duration: 60,
-        status: 'in-progress',
-        resources: ['Packaging Station 01'],
-        materials: [
-          material('Material C', 4, 'boxes'),
-          material('Label Roll', 1, 'roll'),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'ORD-002',
-    operations: [
-      {
-        step: 'Machining',
-        start: -150,
-        duration: 90,
-        status: 'finished',
-        resources: ['Machine 01'],
-        materials: [material('Material A', 10, 'kg')],
-      },
-      {
-        step: 'Assembly',
-        start: -60,
-        duration: 120,
-        status: 'in-progress',
-        resources: ['Assembly Station 01'],
-        materials: [
-          material('Material B', 6, 'pcs'),
-          material('Fasteners', 32, 'pcs'),
-        ],
-      },
-      {
-        step: 'Quality Check',
-        start: 60,
-        duration: 60,
-        status: 'queued',
-        resources: ['QC Station 01', 'Inspection Kit'],
-        materials: [material('Calibration Fluid', 0.5, 'L')],
-      },
-      {
-        step: 'Packaging',
-        start: 120,
-        duration: 60,
-        status: 'queued',
-        resources: ['Packaging Station 01'],
-        materials: [
-          material('Material C', 3, 'boxes'),
-          material('Label Roll', 1, 'roll'),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'ORD-003',
-    operations: [
-      {
-        step: 'Machining',
-        start: -120,
-        duration: 90,
-        status: 'finished',
-        resources: ['Machine 02'],
-        materials: [material('Material A', 15, 'kg')],
-      },
-      {
-        step: 'Assembly',
-        start: -30,
-        duration: 75,
-        status: 'blocked',
-        resources: ['Assembly Station 02'],
-        materials: [
-          material('Material B', 10, 'pcs'),
-          material('Fasteners', 50, 'pcs'),
-        ],
-      },
-      {
-        step: 'Quality Check',
-        start: 45,
-        duration: 60,
-        status: 'queued',
-        resources: ['QC Station 01', 'Inspection Kit'],
-        materials: [material('Calibration Fluid', 0.5, 'L')],
-      },
-      {
-        step: 'Packaging',
-        start: 105,
-        duration: 60,
-        status: 'queued',
-        resources: ['Packaging Station 02'],
-        materials: [material('Material C', 5, 'boxes')],
-      },
-    ],
-  },
-  {
-    id: 'ORD-004',
-    operations: [
-      {
-        step: 'Machining',
-        start: 10,
-        duration: 150,
-        status: 'queued',
-        resources: ['Machine 01'],
-        materials: [material('Material B', 20, 'kg')],
-      },
-      {
-        step: 'Assembly',
-        start: 160,
-        duration: 90,
-        status: 'queued',
-        resources: ['Assembly Station 01'],
-        materials: [
-          material('Material B', 12, 'pcs'),
-          material('Fasteners', 60, 'pcs'),
-        ],
-      },
-      {
-        step: 'Quality Check',
-        start: 250,
-        duration: 45,
-        status: 'queued',
-        resources: ['QC Station 01', 'Inspection Kit'],
-        materials: [material('Calibration Fluid', 0.5, 'L')],
-      },
-      {
-        step: 'Packaging',
-        start: 295,
-        duration: 60,
-        status: 'queued',
-        resources: ['Packaging Station 01'],
-        materials: [
-          material('Material C', 6, 'boxes'),
-          material('Label Roll', 1, 'roll'),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'ORD-005',
-    operations: [
-      {
-        step: 'Machining',
-        start: 90,
-        duration: 90,
-        status: 'queued',
-        resources: ['Machine 02'],
-        materials: [material('Material A', 14, 'kg')],
-      },
-      {
-        step: 'Assembly',
-        start: 180,
-        duration: 90,
-        status: 'queued',
-        resources: ['Assembly Station 02'],
-        materials: [
-          material('Material B', 9, 'pcs'),
-          material('Fasteners', 45, 'pcs'),
-        ],
-      },
-      {
-        step: 'Quality Check',
-        start: 270,
-        duration: 45,
-        status: 'queued',
-        resources: ['QC Station 01', 'Inspection Kit'],
-        materials: [material('Calibration Fluid', 0.5, 'L')],
-      },
-      {
-        step: 'Packaging',
-        start: 315,
-        duration: 45,
-        status: 'queued',
-        resources: ['Packaging Station 02'],
-        materials: [material('Material C', 4, 'boxes')],
-      },
-    ],
-  },
-]
-
-const getOrderStatus = (order: ProductionOrder): TOrderStatus => {
-  const statuses = order.operations.map((operation) => operation.status)
-
-  if (statuses.includes('blocked')) return 'blocked'
-  if (statuses.every((status) => status === 'finished')) return 'finished'
-  if (statuses.includes('in-progress')) return 'in-progress'
-  if (statuses.some((status) => status === 'finished')) return 'in-progress'
-  return 'queued'
+type TFlatOperation = {
+  key: string
+  order: TProductionOrder
+  operation: TOrderOperation
+  index: number
 }
 
-const allOperations: FlatOperation[] = orders.flatMap((order) =>
+const orders = getOrder()
+
+const allOperations: TFlatOperation[] = orders.flatMap((order) =>
   order.operations.map((operation, index) => ({
     key: `${order.id}-${operation.step}`,
     order,
@@ -316,7 +60,7 @@ const allOperations: FlatOperation[] = orders.flatMap((order) =>
  * Greedy lane assignment so overlapping bars in the same step row
  * stack vertically instead of drawing on top of each other.
  */
-const assignLanes = (items: FlatOperation[]) => {
+const assignLanes = (items: TFlatOperation[]) => {
   const sorted = [...items].sort(
     (a, b) => a.operation.start - b.operation.start,
   )
@@ -341,13 +85,10 @@ const assignLanes = (items: FlatOperation[]) => {
   return { lanes, laneCount: Math.max(laneEnds.length, 1) }
 }
 
-type HoverState = {
-  item: FlatOperation
+type THoverState = {
+  item: TFlatOperation
   rect: DOMRect
 }
-
-const formatQuantity = (quantity: number) =>
-  Number.isInteger(quantity) ? String(quantity) : quantity.toFixed(1)
 
 const formatSchedule = (start: number, duration: number) => {
   const end = start + duration
@@ -361,7 +102,7 @@ const formatSchedule = (start: number, duration: number) => {
   return `${describe(start)} → ${describe(end)}`
 }
 
-const OrderHoverCard = ({ item, rect }: HoverState) => {
+const OrderHoverCard = ({ item, rect }: THoverState) => {
   const { order, operation, index } = item
   const cardRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState<{
@@ -430,7 +171,7 @@ const OrderHoverCard = ({ item, rect }: HoverState) => {
 
           return (
             <div
-              key={op.step}
+              key={`${op.step}-${opIndex}`}
               className={`flex items-center gap-2 rounded px-2 py-1 ${
                 isCurrent ? 'bg-slate-100 font-semibold text-slate-900' : ''
               }`}
@@ -539,7 +280,7 @@ export const Timeline = () => {
   const ticks = Array.from({ length: TOTAL_HOURS + 1 }, (_, index) => index)
 
   const scrollRef = useRef<HTMLDivElement>(null)
-  const [hovered, setHovered] = useState<HoverState | null>(null)
+  const [hovered, setHovered] = useState<THoverState | null>(null)
 
   useEffect(() => {
     const element = scrollRef.current
@@ -692,7 +433,7 @@ export const Timeline = () => {
 
                     return (
                       <div
-                        key={item.key}
+                        key={`${index}-${item.key}`}
                         onMouseEnter={(event) =>
                           setHovered({
                             item,

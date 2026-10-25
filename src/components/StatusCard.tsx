@@ -64,7 +64,7 @@ export const  StatusCard = ({ status, value }: StatusCardProps) => {
       </div>
 
       <div className="flex flex-col items-center">
-        <p className="text-3xl font-semibold tabular-nums">
+        <p className="text-xl font-semibold tabular-nums">
           {value}
         </p>
         <p className="text-xs text-slate-400">Orders</p>

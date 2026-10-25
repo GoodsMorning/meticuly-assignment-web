@@ -34,7 +34,7 @@ function Home() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button>
+            <Button className='bg-blue-700 hover:bg-blue-800'>
               <Plus className="size-4" />
               Add Order
             </Button>
@@ -47,8 +47,9 @@ function Home() {
           ))}
         </div>
 
-        <Timeline />
-
+        <div className='h-120'>
+          <Timeline />
+        </div>
         <Table />
       </div>
       <footer className="py-4 text-center text-xs text-slate-400">

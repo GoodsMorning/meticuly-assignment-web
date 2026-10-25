@@ -1,14 +1,19 @@
+import type { TMaterial } from "./material"
+import type { TStepName } from "./step"
+
 export type TOrderStatus = 'queued' | 'in-progress' | 'blocked' | 'finished'
 
-// export type OrderOperation = {
-//   step: StepName
-//   /** minutes relative to NOW (negative = past, positive = future) */
-//   start: number
-//   /** minutes */
-//   duration: number
-//   status: OrderStatus
-//   /** machines, stations, tools */
-//   resources: string[]
-//   /** consumed materials with quantities */
-//   materials: Material[]
-// }
+export type TOrderOperation = {
+  step: TStepName
+  start: number
+  duration: number
+  status: TOrderStatus
+  resources: string[]
+  materials: TMaterial[]
+}
+
+export type TProductionOrder = {
+  id: string
+  operations: TOrderOperation[]
+}
+
