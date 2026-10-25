@@ -1,6 +1,6 @@
 import type { TLog } from '#/types/log'
 
-export const getLogs = () :TLog[] => {
+export const getLogs = (): TLog[] => {
   return [
     {
       time: '14:32:08',

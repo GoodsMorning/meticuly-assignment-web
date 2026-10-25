@@ -20,5 +20,5 @@ export const getMaterialStocks = (): TMaterialStock[] => {
       reserved: 1,
     },
     { name: 'Label Roll', unit: 'rolls', stock: 6, consumed: 1, reserved: 2 },
-  ] satisfies TMaterialStock[]
+  ]
 }
