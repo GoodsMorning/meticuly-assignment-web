@@ -1,6 +1,5 @@
 import { formatQuantity, percentage } from '#/helpers/quantity'
 import { getMaterialStocks } from '#/services/material'
-import { getResources } from '#/services/resource'
 import type { TMaterialStock } from '#/types/material'
 import type { TResourceItem, TResourceStatus } from '#/types/resource'
 import { Boxes, Cog } from 'lucide-react'
@@ -30,7 +29,7 @@ export const ResourcesTab = () => {
   const [view, setView] = useState<'materials' | 'resources'>('materials')
 
   const materials = getMaterialStocks()
-  const resources = getResources()
+  const resources = [] as TResourceItem[]// getResources()
 
   return (
     <div className="p-5">

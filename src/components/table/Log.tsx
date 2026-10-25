@@ -1,4 +1,4 @@
-import { getLogs } from '#/services/log'
+import { useLogs } from '#/hooks/useLog'
 import type { TLogLevel } from '#/types/log'
 
 const logDotStyles: Record<TLogLevel, string> = {
@@ -8,25 +8,25 @@ const logDotStyles: Record<TLogLevel, string> = {
 }
 
 export const LogTab = () => {
-  const logs = getLogs()
+  const { data:logs } = useLogs()
   return (
     <>
       <div className="divide-y divide-slate-100">
-        {logs.map((entry) => (
+        {logs.map((log) => (
           <div
-            key={`${entry.time}-${entry.orderId}`}
+            key={`${log.time}-${log.orderId}`}
             className="flex flex-wrap items-center gap-3 px-5 py-4 text-sm"
           >
             <span
-              className={`size-2 shrink-0 rounded-full ${logDotStyles[entry.level]}`}
+              className={`size-2 shrink-0 rounded-full ${logDotStyles[log.level]}`}
             />
             <span className="font-mono text-xs text-slate-400">
-              {entry.time}
+              {log.time}
             </span>
             <span className="rounded bg-slate-100 px-2 py-1 text-xs font-medium">
-              {entry.orderId}
+              {log.orderId}
             </span>
-            <span className="text-slate-600">{entry.message}</span>
+            <span className="text-slate-600">{log.message}</span>
           </div>
         ))}
       </div>
