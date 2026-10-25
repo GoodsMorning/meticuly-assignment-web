@@ -1,12 +1,6 @@
-
-import type { TOrderStatus } from '#/types/order'
-import {
-  Activity,
-  AlertTriangle,
-  CheckCircle2,
-  Clock3
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react';
+import type { TOrderStatus, TOrderStatusCount } from '#/types/order'
+import { Activity, AlertTriangle, CheckCircle2, Clock3 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 const statusStyles: Record<
   TOrderStatus,
@@ -43,12 +37,7 @@ const statusStyles: Record<
   },
 }
 
-export type TStatusCardProps = {
-  status: TOrderStatus
-  value: number
-}
-
-export const  StatusCard = ({ status, value }: TStatusCardProps) => {
+export const StatusCard = ({ status, count }: TOrderStatusCount) => {
   const { label, color, bg, icon: Icon } = statusStyles[status]
 
   return (
@@ -64,9 +53,7 @@ export const  StatusCard = ({ status, value }: TStatusCardProps) => {
       </div>
 
       <div className="flex flex-col items-center">
-        <p className="text-xl font-semibold tabular-nums">
-          {value}
-        </p>
+        <p className="text-xl font-semibold tabular-nums">{count}</p>
         <p className="text-xs text-slate-400">Orders</p>
       </div>
     </div>

@@ -1,8 +1,8 @@
 import type { TOrderStatus } from "#/types/order"
 import { useState } from "react"
 import { formatQuantity } from '#/helpers/quantity'
-import { getOrder } from "#/services/order"
 import { getCurrentOperation, getOrderStatus } from "#/helpers/order"
+import { useOrders } from "#/hooks/useOrder"
 
 const badgeStyles: Record<TOrderStatus, string> = {
   queued: 'bg-slate-100 text-slate-700',
@@ -32,7 +32,7 @@ export const statusLabels: Record<TOrderStatus, string> = {
 export const OrdersTab = () => {
   const [filter, setFilter] = useState<TFilter>('all')
 
-  const orders = getOrder()
+  const { data: orders } = useOrders()
   
   const rows = orders
     .map((order) => ({

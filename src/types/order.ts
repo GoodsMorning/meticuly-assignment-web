@@ -17,3 +17,7 @@ export type TProductionOrder = {
   operations: TOrderOperation[]
 }
 
+export type TOrderStatusCount = {
+  status: TOrderStatus
+  count: number
+}

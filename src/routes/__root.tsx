@@ -1,9 +1,12 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import '../styles.css'
+
+const queryClient = new QueryClient()
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -12,18 +15,20 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <>
-      <Outlet />
-      <TanStackDevtools
-        config={{
-          position: 'bottom-right',
-        }}
-        plugins={[
-          {
-            name: 'TanStack Router',
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-        ]}
-      />
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+        <TanStackDevtools
+          config={{
+            position: 'bottom-right',
+          }}
+          plugins={[
+            {
+              name: 'TanStack Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+          ]}
+        />
+      </QueryClientProvider>
     </>
   )
 }

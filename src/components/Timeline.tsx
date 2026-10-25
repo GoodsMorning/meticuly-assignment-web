@@ -1,8 +1,12 @@
 import { getOrderStatus } from '#/helpers/order'
 import { formatQuantity } from '#/helpers/quantity'
-import { getOrder } from '#/services/order'
-import type { TOrderOperation, TOrderStatus, TProductionOrder } from '#/types/order'
-import { steps  } from '#/types/step'
+import { useOrders } from '#/hooks/useOrder'
+import type {
+  TOrderOperation,
+  TOrderStatus,
+  TProductionOrder,
+} from '#/types/order'
+import { steps } from '#/types/step'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -22,7 +26,6 @@ const ROW_PADDING_Y = 10
 const MIN_ROW_HEIGHT = 56
 // Roughly how many minutes the 76px min bar width covers (used for overlap math)
 const MIN_BAR_MINUTES = 65
-
 
 const statusStyles: Record<TOrderStatus, string> = {
   queued: 'bg-slate-300 text-slate-800',
@@ -44,17 +47,6 @@ type TFlatOperation = {
   operation: TOrderOperation
   index: number
 }
-
-const orders = getOrder()
-
-const allOperations: TFlatOperation[] = orders.flatMap((order) =>
-  order.operations.map((operation, index) => ({
-    key: `${order.id}-${operation.step}`,
-    order,
-    operation,
-    index,
-  })),
-)
 
 /**
  * Greedy lane assignment so overlapping bars in the same step row
@@ -289,6 +281,17 @@ export const Timeline = () => {
       element.scrollLeft = (element.scrollWidth - element.clientWidth) / 2
     }
   }, [])
+
+  const { data: orders } = useOrders()
+
+  const allOperations: TFlatOperation[] = orders.flatMap((order) =>
+    order.operations.map((operation, index) => ({
+      key: `${order.id}-${operation.step}`,
+      order,
+      operation,
+      index,
+    })),
+  )
 
   return (
     <div className="flex h-full max-h-full min-h-0 flex-col overflow-hidden rounded-lg bg-white text-xs text-slate-700">

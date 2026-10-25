@@ -6,14 +6,14 @@ import {
 } from 'lucide-react'
 import { Table } from '#/components/Table'
 import { StatusCard } from '#/components/StatusCard'
-import { getOrderSummary } from '#/services/order'
+import { useOrderSummary } from '#/hooks/useOrder'
 
 export const Route = createFileRoute('/')({
   component: Home,
 })
 
 function Home() {
-  const orderSummary = getOrderSummary()
+  const { data:orderSummary } = useOrderSummary()
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 p-4 md:p-8">
@@ -33,8 +33,8 @@ function Home() {
           </Button>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {orderSummary.map(({ status, value }) => (
-            <StatusCard key={status} status={status} value={value} />
+          {orderSummary.map(({ status, count }) => (
+            <StatusCard key={status} status={status} count={count} />
           ))}
         </div>
         <div className='h-120'>
