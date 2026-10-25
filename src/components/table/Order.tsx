@@ -33,6 +33,7 @@ export const OrdersTab = () => {
   const [filter, setFilter] = useState<TFilter>('all')
 
   const orders = getOrder()
+  
   const rows = orders
     .map((order) => ({
       order,

@@ -1,9 +1,9 @@
 import { useState  } from 'react'
 import type { ReactElement } from 'react';
 import { Boxes, Layers3, ScrollText } from 'lucide-react'
-import { LogTab } from './tab/Log'
-import { ResourcesTab } from './tab/Resource'
-import { OrdersTab } from './tab/Order'
+import { LogTab } from './table/Log'
+import { ResourcesTab } from './table/Resource'
+import { OrdersTab } from './table/Order'
 
 type TTabId = 'orders' | 'resources' | 'logs'
 

@@ -1,7 +1,6 @@
+import type { TStatusCardProps } from "#/components/StatusCard"
 import type { TMaterial } from "#/types/material"
 import type { TProductionOrder } from "#/types/order"
-
-
 
 const material = (name: string, quantity: number, unit: string): TMaterial => ({
   name,
@@ -9,6 +8,14 @@ const material = (name: string, quantity: number, unit: string): TMaterial => ({
   unit,
 })
 
+export const getOrderSummary = () : TStatusCardProps[] => {
+  return [
+    { status: 'queued', value: 12 },
+    { status: 'in-progress', value: 8 },
+    { status: 'blocked', value: 2 },
+    { status: 'finished', value: 24 },
+  ]
+}
 
 export const getOrder = () : TProductionOrder[] => {
   return [

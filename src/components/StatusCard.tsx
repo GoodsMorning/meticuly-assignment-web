@@ -43,12 +43,12 @@ const statusStyles: Record<
   },
 }
 
-type StatusCardProps = {
+export type TStatusCardProps = {
   status: TOrderStatus
   value: number
 }
 
-export const  StatusCard = ({ status, value }: StatusCardProps) => {
+export const  StatusCard = ({ status, value }: TStatusCardProps) => {
   const { label, color, bg, icon: Icon } = statusStyles[status]
 
   return (
