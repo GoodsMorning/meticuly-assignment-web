@@ -2,10 +2,10 @@ import { useState  } from 'react'
 import type { ReactElement } from 'react';
 import { Boxes, Layers3, ScrollText } from 'lucide-react'
 import { LogTab } from './table/Log'
-import { ResourcesTab } from './table/Resource'
+import { StockTab } from './table/Stock'
 import { OrdersTab } from './table/Order'
 
-type TTabId = 'orders' | 'resources' | 'logs'
+type TTabId = 'orders' | 'stock' | 'logs'
 
 const tabs: {
   id: TTabId
@@ -18,8 +18,8 @@ const tabs: {
     icon: Layers3,
   },
   {
-    id: 'resources',
-    label: 'Resource Utilization',
+    id: 'stock',
+    label: 'Utilization',
     icon: Boxes,
   },
   {
@@ -31,7 +31,7 @@ const tabs: {
 
 const RenderTab: Record<TTabId, ReactElement> =  {
   'orders' :  <OrdersTab />,
-  'resources': <ResourcesTab />,
+  'stock': <StockTab />,
   'logs': <LogTab />,
 }
 

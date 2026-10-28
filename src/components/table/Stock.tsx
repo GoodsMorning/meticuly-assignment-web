@@ -1,5 +1,5 @@
 import { formatQuantity, percentage } from '#/helpers/quantity'
-import { getMaterialStocks } from '#/services/material'
+import { useStock } from '#/hooks/useStock'
 import type { TMaterialStock } from '#/types/material'
 import type { TResourceItem, TResourceStatus } from '#/types/resource'
 import { Boxes, Cog } from 'lucide-react'
@@ -25,11 +25,12 @@ const resourceBarStyles: Record<TResourceStatus, string> = {
   blocked: 'bg-amber-500',
 }
 
-export const ResourcesTab = () => {
+export const StockTab = () => {
   const [view, setView] = useState<'materials' | 'resources'>('materials')
 
-  const materials = getMaterialStocks()
-  const resources = [] as TResourceItem[]// getResources()
+  const {
+    data: { materials, resources },
+  } = useStock()
 
   return (
     <div className="p-5">
