@@ -1,10 +1,10 @@
-import type { TMaterial } from "./material"
-import type { TStepName } from "./step"
+import type { TMaterial } from './material'
+import type { TStepType } from './step'
 
 export type TOrderStatus = 'queued' | 'in-progress' | 'blocked' | 'finished'
 
 export type TOrderOperation = {
-  step: TStepName
+  step: TStepType
   start: number
   duration: number
   status: TOrderStatus
@@ -20,4 +20,9 @@ export type TProductionOrder = {
 export type TOrderStatusCount = {
   status: TOrderStatus
   count: number
+}
+
+export type TCreateOrderRequest = {
+  id: string
+  operations: TStepType[]
 }

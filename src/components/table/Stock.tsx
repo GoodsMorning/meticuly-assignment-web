@@ -141,7 +141,7 @@ const MaterialRow = ({ material }: { material: TMaterialStock }) => {
 
       <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
         <span>
-          {formatQuantity(consumed)} used · {formatQuantity(reserved)} reserved
+          {formatQuantity(consumed)} used · {reserved} reserved
         </span>
         <span className={isLow ? 'font-medium text-amber-700' : ''}>
           {formatQuantity(remaining)} {unit} remaining
@@ -162,6 +162,7 @@ const ResourceRow = ({ resource }: { resource: TResourceItem }) => (
           {resourceStatusLabels[resource.status]}
         </span>
       </div>
+
       <span className="text-sm font-semibold tabular-nums">
         {resource.utilization}%
       </span>
@@ -170,13 +171,29 @@ const ResourceRow = ({ resource }: { resource: TResourceItem }) => (
     <div className="h-2 overflow-hidden rounded-full bg-slate-100">
       <div
         className={`h-full rounded-full ${resourceBarStyles[resource.status]}`}
-        style={{ width: `${resource.utilization}%` }}
+        style={{
+          width: `${Math.min(100, Math.max(0, resource.utilization))}%`,
+        }}
       />
     </div>
 
-    <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
-      <span>{resource.order}</span>
-      <span>{resource.note}</span>
+    <div className="mt-2 flex flex-wrap items-start justify-between gap-2 text-xs text-slate-500">
+      <div className="flex flex-wrap items-center gap-1">
+        {resource.orders.length > 0 ? (
+          resource.orders.map((order) => (
+            <span
+              key={order}
+              className="rounded bg-slate-100 px-2 py-1 font-medium text-slate-600"
+            >
+              {order}
+            </span>
+          ))
+        ) : (
+          <span>No assigned orders</span>
+        )}
+      </div>
+
+      <span className="min-w-0 text-right">{resource.note}</span>
     </div>
   </div>
 )

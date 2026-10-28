@@ -13,3 +13,10 @@ export type TMaterial = {
   quantity: number
   unit: string
 }
+
+export type TMaterialTemplate = {
+  name: string
+  unit: string
+  numerator: number
+  denominator: number
+}

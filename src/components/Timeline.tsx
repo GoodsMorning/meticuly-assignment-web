@@ -6,7 +6,7 @@ import type {
   TOrderStatus,
   TProductionOrder,
 } from '#/types/order'
-import { steps } from '#/types/step'
+import { STEPS } from '#/types/step'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -364,7 +364,7 @@ export const Timeline = () => {
           </div>
 
           {/* Production step rows */}
-          {steps.map((step) => {
+          {STEPS.map((step) => {
             const stepItems = allOperations.filter(
               (item) => item.operation.step === step,
             )

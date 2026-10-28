@@ -1,10 +1,10 @@
-
-export type TResourceStatus = 'busy' | 'idle' | 'blocked'
+export type TResourceStatus = "busy" | "idle" | "blocked";
 
 export type TResourceItem = {
-  name: string
-  status: TResourceStatus
-  utilization: number
-  order: string
-  note: string
-}
+  id: string;
+  name: string;
+  status: TResourceStatus;
+  utilization: number;
+  orders: string[];
+  note: string;
+};

@@ -1,19 +1,21 @@
 import { Timeline } from '#/components/Timeline'
 import { Button } from '#/components/ui/button'
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  Plus,
-} from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Table } from '#/components/Table'
 import { StatusCard } from '#/components/StatusCard'
 import { useOrderSummary } from '#/hooks/useOrder'
+import { useState } from 'react'
+import { CreateOrderSheet } from '#/components/CreatOrderSheet'
 
 export const Route = createFileRoute('/')({
   component: Home,
 })
 
 function Home() {
-  const { data:orderSummary } = useOrderSummary()
+  const { data: orderSummary } = useOrderSummary()
+  const [createSheetOpen, setCreateSheetOpen] = useState(false)
+
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 p-4 md:p-8">
@@ -27,7 +29,10 @@ function Home() {
               Monitor production, orders, and resource consumption.
             </p>
           </div>
-          <Button className='w-full md:w-fit  bg-blue-700 hover:bg-blue-800'>
+          <Button
+            className="w-full md:w-fit  bg-blue-700 hover:bg-blue-800"
+            onClick={() => setCreateSheetOpen(true)}
+          >
             <Plus className="size-4" />
             Add Order
           </Button>
@@ -37,7 +42,7 @@ function Home() {
             <StatusCard key={status} status={status} count={count} />
           ))}
         </div>
-        <div className='h-120'>
+        <div className="h-120">
           <Timeline />
         </div>
         <Table />
@@ -45,6 +50,10 @@ function Home() {
       <footer className="py-4 text-center text-xs text-slate-400">
         Meticuly Production Dashboard · Demo data
       </footer>
+      <CreateOrderSheet
+        open={createSheetOpen}
+        onOpenChange={setCreateSheetOpen}
+      />
     </main>
   )
 }
